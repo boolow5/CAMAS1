@@ -1,0 +1,16 @@
+{% extends 'university/layout.html' %}
+{% block content %}
+
+<h1>{{ owner }}Payments</h1>
+{% if payments %}
+	{% for payment in payments %}
+		<p><b>{{ payment.pk }}</b><a href="{%	url	"payment_details"	pk=payment.pk	%}">{{ payment }}</a></p>
+	{% endfor %}
+{% else %}
+	{% if owner = None %}
+	<p>No payments recieved by you yet.</p>
+	{% else %}
+	<p>No payments received yet.</p>
+	{% endif %}
+{% endif %}
+{% endblock %}

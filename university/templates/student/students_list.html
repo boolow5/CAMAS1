@@ -1,0 +1,20 @@
+{% extends 'university/layout.html' %}
+{% block content %}
+<h1>Students List</h1>
+<div class='search-students'>
+	<form method="get" action="/cms/search/student" class="search-area">
+		<input type="text" id="searchBox" class="input-medium search-query" name="filter" placeholder="Search">
+		<input type="submit" class="btn" value="Search" >
+	</form>
+</div>
+
+{% for student in students %}
+	<div class='student-list-item'>
+		ID: <b>{{ student.pk }}</b> Name:<a class="text-{% if student.status %}primary{% else %}danger{% endif %}" href="{%	url	"student_profile"	pk=student.pk	%}">{{ student }}</a>
+		<a href="{%	url	"student_account_details"	student.pk	%}"> <span class='marks-check'>Check current balance</span></a>
+		<a href="{%	url	"student_exam_report"	student.pk student.classroom.current_year.pk student.classroom.current_semester.pk	%}"> <span class='marks-check'>Check current marks</span></a>
+		<a href="{%	url	"payments_list"	student.pk %}"> <span class='marks-check'>Check payment history</span></a>
+		
+	</div>
+{% endfor %}
+{% endblock %}

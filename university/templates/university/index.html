@@ -1,0 +1,11 @@
+{% extends 'university/layout.html' %}
+{% block content %}
+
+{% if user.is_authenticated %}
+	<p class='welcomeMessage text-primary'>Hi {{ user.username }}, welcome to {{ settings.UNIVERSITY_NAME }}'s Management System developed by Bolow Software Solutions BoSS.<p>
+	
+{% else %}
+	Please sign in to continue
+{% endif %}
+
+{% endblock %}

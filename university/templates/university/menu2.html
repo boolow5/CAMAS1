@@ -1,0 +1,82 @@
+{% block header %}
+<div class='row'>
+	<div class='col-sm-8'>
+		<div class="btn-group">
+		  {% if request.user.is_authenticated %}
+<div class="btn-group">
+  <button type="button" class="btn btn-primary">BoSS</button>
+  
+  <div class="btn-group">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+    Student <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="/cms/new/student">New Student</a></li>
+      <li><a href="/cms/students">All Students</a></li>
+    </ul>
+  </div>
+  
+  <div class="btn-group">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+    Employees <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="/cms/new/employee">New Employee</a></li>
+      <li><a href="/cms/employees">All Employees</a></li>
+    </ul>
+  </div>
+  
+  <div class="btn-group">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+    Payments <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="/cms/new/payment">New Payment</a></li>
+      <li><a href="/cms/payments">My Payments log</a></li>
+    </ul>
+  </div>
+  
+  <div class="btn-group">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+    Accounts <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="/cms/new/account">New Account</a></li>
+      <li><a href="/cms/accounts">All Accounts</a></li>
+    </ul>
+  </div>
+  
+  <div class="btn-group">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+    Exams <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu">
+      <li class="dropdown-header">Exams</li>
+      <li><a href="/cms/new/exam">New Exam</a></li>
+      <li><a href="/cms/exams">Exams</a></li>
+  
+      <li class="dropdown-header">Exam Types</li>
+      <li><a href="/cms/new/exam_type">New Exam Type</a></li>
+      <li><a href="/cms/exam_types">Exam Types</a></li>
+  
+      <li class="dropdown-header">Reports</li>
+      <li><a href="/cms/new/exam_report">New Exam Report</a></li>
+      <li><a href="/cms/exam_reports">Exam Reports Log</a></li>
+    </ul>
+  </div>
+  
+  
+  
+</div>
+
+		  {% else %}
+		  	<a href="/aboutus"><button type="button" class="btn btn-default">About BoSS</button></a>
+		  {% endif %}
+		</div><!-- btn-group -->
+	</div>
+	<div class='col-sm-4'>
+		<div class='right'> 
+			{% if request.user.is_authenticated %}
+				Welcome <strong>{{ request.user }}</strong>! <a href="/users/logout"><button type="button" class="btn btn-default">Logout</button></a>
+			{% else %}
+				<a href="/users/login"><button type="button" class="btn btn-default">Login</button></a>
+			{% endif %}		
+		</div><!-- right -->
+	</div>
+</div> <!-- row -->
+{% endblock %}

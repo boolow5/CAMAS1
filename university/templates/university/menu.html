@@ -1,0 +1,27 @@
+{% block header %}
+<div class='row'>
+	<div class='col-sm-8'>
+		<div class="btn-group">
+		  {% if request.user.is_authenticated %}
+		  	<a href="/cms/"><button type="button" class="btn btn-default">Home</button></a>
+			<a href="/cms/students"><button type="button" class="btn btn-default">Students</button></a>
+			<a href="/cms/exams"><button type="button" class="btn btn-default">Exams</button></a>
+			<a href="/cms/exam_reports"><button type="button" class="btn btn-default">Exam Reports</button></a>
+			<a href="/cms/subjects"><button type="button" class="btn btn-default">Subjects</button></a>
+			<a href="/cms/employees"><button type="button" class="btn btn-default">Employees</button></a>
+		  {% else %}
+		  	<a href="/aboutus"><button type="button" class="btn btn-default">About BoSS</button></a>
+		  {% endif %}
+		</div><!-- btn-group -->
+	</div>
+	<div class='col-sm-4'>
+		<div class='right'> 
+			{% if request.user.is_authenticated %}
+				Welcome <strong>{{ request.user }}</strong>! <a href="/users/logout"><button type="button" class="btn btn-default">Logout</button></a>
+			{% else %}
+				<a href="/users/login"><button type="button" class="btn btn-default">Login</button></a>
+			{% endif %}		
+		</div><!-- right -->
+	</div>
+</div> <!-- row -->
+{% endblock %}

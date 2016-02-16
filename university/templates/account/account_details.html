@@ -1,0 +1,20 @@
+{% extends 'university/layout.html' %}
+{% block content %}
+
+<h1>{{ account }} Details</h1>
+<table>
+	<tr>
+		<td><em>Account No</em></td>
+		<td><b>{{ account.number }}</b></td>
+	</tr>
+	<tr>
+		<td><em>Owner</em></td>
+		<td><b>{{ account.owner }}</b></td>
+	</tr>
+	<tr>
+		<td><em>Balance</em></td>
+		<td><b>{{ account.balance }}</b></td>
+	</tr>
+	
+</table>
+{% endblock %}

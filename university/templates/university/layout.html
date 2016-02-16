@@ -1,0 +1,54 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>{% block title %}BoSS University Management System{% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link href="{% static 'university/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'university/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'university/css/style.css' %}" />
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+  	<div class='container'>
+  		<div class='header'>
+  			{% include "university/header.html" %}
+  		</div><!-- header -->
+  		
+  		<div class='menus'>
+  			{% include 'university/menu2.html' %}
+  		</div><!-- menus -->
+  		
+	    <div class='content'>
+	    	{% block content %}{% endblock %}
+	    </div>
+	    
+	    <div class='footer'>
+	    	{% include "university/footer.html" %}
+
+	    </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'university/js/jquery.js' %}"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'university/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'university/js/result.js' %}"></script>
+    <script src="{% static 'university/js/results.js' %}"></script>
+	<script type="text/javascript"> 
+	   //var a = "{{someDjangoVariable}}"
+
+	</script>
+  </body>
+</html>
