@@ -7,7 +7,7 @@ from django.utils import timezone
 class Subject(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=300)
-    
+
     def __str__(self):
         return self.name
 
@@ -15,15 +15,15 @@ class Position(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     level = models.IntegerField()
-    
+
     def __str__(self):
         return self.name
 
 class Employee(models.Model):
-    user = models.OneToOneField(User) 
-    subject = models.ForeignKey(Subject, default=None)
+    user = models.OneToOneField(User)
+    subject = models.ForeignKey(Subject, default=None, null=True)
     position = models.ForeignKey(Position, null=True)
-    
+
     def __str__(self):
         if self.user is not None:
             return self.user.first_name + ' ' + self.user.last_name
@@ -32,7 +32,7 @@ class Employee(models.Model):
 class Faculty(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=200)
-    dean = models.ForeignKey(Employee)
+    dean = models.ForeignKey(Employee, null=True)
     def __str__(self):
         return self.name
 
@@ -47,20 +47,20 @@ class Department(models.Model):
 class Year(models.Model):
     name = models.CharField(max_length=30)
     level = models.IntegerField()
-    
+
     def __str__(self):
         return str(self.name) + ' year'
-    
+
 class Term(models.Model):
     is_first = models.BooleanField(default=True)
     name = models.CharField(max_length=30)
-    
-    
+
+
     def __str__(self):
         return str(self.name) + ' semester'
 
 
-    
+
 class Classroom(models.Model):
     name = models.CharField(max_length=30, default='One')
     current_year = models.ForeignKey(Year)
@@ -69,7 +69,7 @@ class Classroom(models.Model):
     max_year = models.IntegerField(default=4)
     department = models.ForeignKey(Department, null=True)
     status = models.BooleanField(default=True)
-    
+
     def __str__(self):
         return self.name
 
@@ -78,10 +78,10 @@ class classSubjects(models.Model):
     year = models.ForeignKey(Year)
     semester = models.ForeignKey(Term)
     subjects = models.ManyToManyField(Subject)
-    
+
     def __str__(self):
         return str(self.classroom) + ' subjects in ' + str(self.year) + '(' + str(self.semester) + ')'
-    
+
 
 class Student(models.Model):
     first_name = models.CharField(max_length=30)
@@ -98,7 +98,7 @@ class Student(models.Model):
     classroom = models.ForeignKey(Classroom)
     fee = models.DecimalField(decimal_places=2, max_digits=6, default=0)
     last_updated = models.DateTimeField(default=timezone.now)
-    
+
     def __str__(self):
         return self.first_name + " " + self.middle_name + " " + self.last_name
 
@@ -108,7 +108,7 @@ class Account(models.Model):
     owner = models.OneToOneField(Student)
     number = models.AutoField(primary_key=True)
     balance = models.DecimalField(decimal_places=2, max_digits=12, default=0.0)
-    
+
     def __str__(self):
         return str(self.owner) + "'s account"
 
@@ -119,7 +119,7 @@ class Transaction(models.Model):
     date = models.DateTimeField(default = timezone.now)
     description = models.TextField(max_length=300)
     is_debit = models.BooleanField(default=True)
-    
+
     def __str__(self):
         if self.is_debit:
             return '$' + str(self.amount)
@@ -131,7 +131,7 @@ class BillType(models.Model):
     description = models.TextField(null=True)
     is_auto_generated = models.BooleanField(default=False)
     generation_day = models.IntegerField(default=1)
-    
+
     def __str__(self):
         if not self.is_auto_generated:
             return self.name
@@ -146,17 +146,17 @@ class Bill(models.Model):
     date = models.DateField(default=timezone.now)
     type = models.ForeignKey(BillType, default=1)
     created_by = models.ForeignKey(Employee)
-    
+
     def __str__(self):
         return self.type.name + ' of ' + str(self.amount) + ' to ' + str(self.account)
 
 class ExamType(models.Model):
     name = models.CharField(max_length=50)
     max_marks = models.DecimalField(decimal_places=2, max_digits=5, default=100.0)
-    
+
     def __str__(self):
         return self.name
-    
+
 
 class Exam(models.Model):
     title = models.CharField(max_length=100)
@@ -166,7 +166,7 @@ class Exam(models.Model):
     semester = models.ForeignKey(Term, null=True)
     e_type = models.ForeignKey(ExamType)
     is_admission = models.BooleanField(default=False)
-    
+
     def __str__(self):
         return self.title
 
@@ -178,11 +178,10 @@ class ExamReport(models.Model):
     date = models.DateField(default=timezone.now)
     modified = models.DateTimeField(auto_now_add=True)
     note = models.TextField()
-    
+
     def __str__(self):
         return str(self.grade)
 class ErrorReport(models.Model):
     message=models.CharField(max_length=300)
     date = models.DateTimeField(default=timezone.now)
     current_user = models.ForeignKey(Employee)
-    

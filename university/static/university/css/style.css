@@ -8,6 +8,13 @@
 	float: right;
 }
 
+a.brand-name {
+	color: #fff;
+}
+a.brand-name:hover {
+	text-decoration: none;
+}
+
 .right {
 	float: right;
 	margin:0em;
@@ -112,7 +119,7 @@ tr:hover {
 	padding: .5em;
 	border: 1px solid gray;
 	background: #F0F0F0;
-	
+
 }
 .content {
 	box-shadow: inset -1px 0px 15px gray;
@@ -149,7 +156,7 @@ tr:hover {
 	margin-left: .5em;
 	width: 5em;
 	height: 5em;
-	
+
 }
 .footer {
 	border-bottom-left-radius: 1em;

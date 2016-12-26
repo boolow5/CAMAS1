@@ -1,9 +1,7 @@
 {% extends 'university/layout.html' %}
-{% load render_table from django_tables2 %}
-{% load mathfilters %}
 {% block content %}
 
-<h1>Details of 
+<h1>Details of
 {{ student }} exam results
  </h1>
  <h3>Student Info:</h3>
@@ -21,18 +19,18 @@
     <td>{{ student.classroom.current_semester }}</td>
    </tr>
  </table>
- 
+
  <h3>
- 
- {% if error %} 
+
+ {% if error %}
  <span class='text text-danger'>{{ error }}</span>
  {% else %}
  Exam results for year {{ year }} - semester {{ semester }}
  {% endif %}
 
-<p></p> 
+<p></p>
  </h3>
 
  {{ t |safe }}
- 
+
 {% endblock %}

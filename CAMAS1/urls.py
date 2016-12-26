@@ -15,22 +15,23 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-import CAMAS1
+import CAMAS1.views
 import university
 
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include('university.urls')),
     url(r'^cms/', include('university.urls')),
-    
+
     #user authentication urls
-    url(r'^users/login/$', "CAMAS1.views.login"),
-    url(r'^users/auth/$', "CAMAS1.views.auth_view"),
-    url(r'^users/logout/$', "CAMAS1.views.logout"),
-    url(r'^users/loggedin/$', "CAMAS1.views.loggedin"),
-    url(r'^users/invalid/$', "CAMAS1.views.invalid_login"),
-    
+    url(r'^users/login/$', CAMAS1.views.login),
+    url(r'^users/auth/$', CAMAS1.views.auth_view),
+    url(r'^users/logout/$', CAMAS1.views.logout),
+    url(r'^users/loggedin/$', CAMAS1.views.loggedin),
+    url(r'^users/invalid/$', CAMAS1.views.invalid_login),
+
     #Bolow Software urls
     url(r'^aboutus/$', university.views.aboutus),
-    
+
 ]

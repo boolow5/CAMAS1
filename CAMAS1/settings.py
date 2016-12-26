@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'university',
-    'django_tables2',
-    'mathfilters',
+    #'django_tables2',
+    #'mathfilters',
 ]
 
 MIDDLEWARE_CLASSES = [
