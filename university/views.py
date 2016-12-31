@@ -4,8 +4,8 @@ from django.shortcuts import render, redirect, render_to_response,\
 from django.template.context_processors import request
 from university import settings
 from django.utils import timezone
-from django.contrib.auth import user_logged_in 
-from django_tables2   import RequestConfig
+from django.contrib.auth import user_logged_in
+#from django_tables2   import RequestConfig
 from university.models import *
 from university.forms import *
 from university.tables import *
@@ -34,7 +34,7 @@ def teacher_profile(request, pk):
         return render(request, 'teacher/teacher_profile.html', {'teacher': teacher,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def register_teacher(request):
     if request.user.is_authenticated():
         error = None
@@ -48,7 +48,7 @@ def register_teacher(request):
                 form = EmployeeForm()
         except:
             error = 'Please enter a valid data before you submit!'
-        
+
         return render(request, 'teacher/new_teacher.html', {'form':form, 'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
@@ -73,7 +73,7 @@ def update_teacher(request, pk):
         return render(request, 'teacher/edit_teacher.html', {'form':form,'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 
 def deactivate_teacher(request, pk):
     if request.user.is_authenticated():
@@ -89,7 +89,7 @@ def deactivate_teacher(request, pk):
 def students_list(request):
     if request.user.is_authenticated():
         students = Student.objects.all()
-        
+
         return render(request, 'student/students_list.html', {'students':students,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
@@ -97,7 +97,7 @@ def students_list(request):
 def students_search(request):
     if request.user.is_authenticated():
         search = request.GET['filter']
-        query = Q(id__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(middle_name__icontains=search)  
+        query = Q(id__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(middle_name__icontains=search)
         students = Student.objects.filter(query)
 
         return render(request, 'student/students_list.html', {'students':students,'settings':settings})
@@ -111,7 +111,7 @@ def student_profile(request, pk):
         return render(request, 'student/student_profile.html', {'student': student,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def register_student(request):
     if request.user.is_authenticated():
         error = None
@@ -131,7 +131,7 @@ def register_student(request):
             form = StudentForm()
         #except:
             #error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'student/new_student.html', {'form':form, 'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
@@ -153,11 +153,11 @@ def update_student(request, pk):
                 form = StudentForm(instance=student)
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'student/edit_student.html', {'form':form, 'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 
 #payment related views
 def create_account(request):
@@ -173,7 +173,7 @@ def create_account(request):
                 form = AccountForm()
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'account/new_account.html', {'form':form,'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
@@ -199,7 +199,7 @@ def student_account_details(request, pk):
     else:
         return render(request, 'user/login.html',{'settings':settings})
 
-    
+
 def edit_account(request, pk):
     if request.user.is_authenticated():
         error = None
@@ -217,7 +217,7 @@ def edit_account(request, pk):
         return render(request, 'account/edit_account.html', {'form':form, 'account':account,'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def add_payment(request):
     if request.user.is_authenticated():
         form = TransactionForm(request.POST)
@@ -232,7 +232,7 @@ def add_payment(request):
                     else:
                         form = TransactionForm()
                         return render(request, 'payment/new_payment.html', {'form':form, 'error':"Amount cannot be zero!",'settings':settings})
-                    acount = Account.objects.get(pk= payment.payee.pk) 
+                    acount = Account.objects.get(pk= payment.payee.pk)
                     acount.balance += payment.amount
                     payment.received_by = request.user
                     payment.save()
@@ -243,10 +243,10 @@ def add_payment(request):
                 return render(request, 'payment/new_payment.html', {'form':form})
         except:
             pass
-        return render(request, 'payment/new_payment.html', {'form':form,'error':'Please enter valid values for each field!','settings':settings})        
+        return render(request, 'payment/new_payment.html', {'form':form,'error':'Please enter valid values for each field!','settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def payments_list(request, pk=0):
     if request.user.is_authenticated():
         if pk==0:
@@ -262,7 +262,7 @@ def payments_list(request, pk=0):
             return render(request, 'payment/payments_list.html', {'payments':payments,'owner':owner})
     else:
         return render(request, 'user/login.html')
-    
+
 def payment_details(request,pk):
     if request.user.is_authenticated():
         payment = get_object_or_404(Transaction, pk=pk)
@@ -271,7 +271,7 @@ def payment_details(request,pk):
         return render(request, 'payment/payment_details.html', {'payment':payment, 'owner':owner,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 #exam related views
 def create_exam(request):
     if request.user.is_authenticated():
@@ -286,25 +286,25 @@ def create_exam(request):
                 form = ExamForm()
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'exam/new_exam.html', {'form':form, 'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def exams_list(request):
     if request.user.is_authenticated():
         exams = Exam.objects.all()
         return render(request, 'exam/exams_list.html', {'exams':exams,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def exam_details(request, pk):
     if request.user.is_authenticated():
         exam = Exam.objects.get(pk=pk)
         return render(request, 'exam/exam_details.html', {'exam':exam,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def edit_exam(request, pk):
     if request.user.is_authenticated():
         error = None
@@ -319,11 +319,11 @@ def edit_exam(request, pk):
                 form = ExamForm(instance=exam)
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'exam/edit_exam.html', {'form':form, 'exam':exam, 'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 #exam types
 def create_exam_type(request):
     if request.user.is_authenticated():
@@ -338,11 +338,11 @@ def create_exam_type(request):
                 form = ExamTypeForm()
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'exam/new_exam_type.html', {'form':form, 'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 
 def exam_types_list(request):
     if request.user.is_authenticated():
@@ -357,7 +357,7 @@ def exam_type_details(request, pk):
         return render(request, 'exam/exam_type_details.html', {'exam_type':exam_type})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def edit_exam_type(request, pk):
     if request.user.is_authenticated():
         error = None
@@ -372,7 +372,7 @@ def edit_exam_type(request, pk):
                 form = ExamForm(instance=exam_type)
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'exam/edit_exam_type.html', {'form':form, 'exam_type':exam_type, 'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
@@ -392,7 +392,7 @@ def create_exam_report(request):
                 form = ExamReportForm()
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'exam/new_exam_report.html', {'form':form, 'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
@@ -403,7 +403,7 @@ def exam_reports_list(request):
         return render(request, 'exam/exam_reports_list.html', {'exam_reports':exam_reports,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def exam_report_details(request, pk):
     if request.user.is_authenticated():
         exam_report = ExamReport.objects.get(pk=pk)
@@ -411,7 +411,7 @@ def exam_report_details(request, pk):
         return render(request, 'exam/exam_report_details.html', {'exam_report':exam_report, 'minimum':minimum,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def edit_exam_report(request, pk):
     if request.user.is_authenticated():
         error = None
@@ -426,7 +426,7 @@ def edit_exam_report(request, pk):
                 form = ExamReportForm(instance=exam_report)
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'exam/edit_exam_report.html', {'form':form, 'exam_report':exam_report, 'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
@@ -434,40 +434,40 @@ def edit_exam_report(request, pk):
 def student_exam_report(request, pk, year=1, semester=1):
     if request.user.is_authenticated():
         student =  Student.objects.get(pk=pk)
-        
+
         try:
             subs = classSubjects.objects.get(classroom = student.classroom, year = year, semester = semester)
             subjects = subs.subjects.all()
         except:
             subjects = []
         subject_list = ""
-        
+
         results = []
         totals = []
         cw_results = []
         mt_results = []
         fn_results = []
         table = '<table>'
-                
+
         for subject in subjects:
             subject_list+=str(subject.name) + ','
             #results.append(ExamReport.objects.filter(exam__e_type__gt=1,subject=subject, student=student).order_by('exam__e_type'))
             cw_results.append(ExamReport.objects.filter(exam__e_type=3,subject=subject, student=student, exam__year=year,exam__semester=semester).order_by('exam__e_type'))
             mt_results.append(ExamReport.objects.filter(exam__e_type=2,subject=subject, student=student, exam__year=year,exam__semester=semester).order_by('exam__e_type'))
             fn_results.append(ExamReport.objects.filter(exam__e_type=4,subject=subject, student=student, exam__year=year,exam__semester=semester).order_by('exam__e_type'))
-            
-        
-                
-            
-        
+
+
+
+
+
         head = ['Subject','Class work 1', 'Mid-term', 'Class work 2', 'Final','Total']
         rows = []
-           
+
         for i in range(len(subjects)):
             sub_total = 0
             row = []
             row.append(subjects[i])
-            
+
             if len(cw_results[i]) != 0:
                 try:
                     sub_total += cw_results[i][0].grade
@@ -475,7 +475,7 @@ def student_exam_report(request, pk, year=1, semester=1):
                 except:pass
             else:
                 row.append('')
-                    
+
             if len(mt_results[i]) != 0:
                 try:
                     sub_total += mt_results[i][0].grade
@@ -483,7 +483,7 @@ def student_exam_report(request, pk, year=1, semester=1):
                 except:pass
             else:
                 row.append('')
-            
+
             if len(cw_results[i]) ==2:
                 try:
                     sub_total += cw_results[i][1].grade
@@ -492,8 +492,8 @@ def student_exam_report(request, pk, year=1, semester=1):
 
             else:
                 row.append('')
-            
-            
+
+
             if len(fn_results[i]) != 0:
                 try:
                     sub_total += fn_results[i][0].grade
@@ -501,34 +501,34 @@ def student_exam_report(request, pk, year=1, semester=1):
                 except:pass
             else:
                 row.append('')
-                
+
             row.append(str(sub_total))
             totals.append(sub_total)
-            
-            
+
+
             rows.append(row)
 
         #Building table from the above data
-            
+
         table = '<table><thead><tr>'
         for h in head:
             table += '<td>' + str(h) + '</td>'
-        
+
         table += '</tr></thead><tbody>'
-        
+
         for i in range(len(rows)):
             table += '<tr>'
-            
+
             for j in range(len(rows[i])):
                 table += '<td>' + str(rows[i][j]) + '</td>'
             table += '</tr>'
         table += '</tbody></table>'
-        
+
         t = '<table>\n<thead><tr><td>name</td><td>age</td><td>sex</td></tr></thead><tbody><tr><td>mahdi</td><td>27</td><td>M</td></tr><tr><td>muno</td><td>23</td><td>F</td></tr></tbody></table>'
-        
+
         if int(year) <= student.classroom.current_year.level:
             return render(request,'exam/student_exam_report.html', {'t':table,'student':student,'year':year,'semester':semester,'subjects':subjects, 'settings':settings})
-        else: 
+        else:
             return render(request,'exam/student_exam_report.html', {'student':student,'year':year,'semester':semester,'error':'The year you requested is not yet!', 'settings':settings})
 
     else:
@@ -536,7 +536,7 @@ def student_exam_report(request, pk, year=1, semester=1):
 
 def get_subject_results(subject_id, student_id, year_id, semester_id):
         subject_results = ExamReport.objects.filter(subject__pk=subject_id,student__pk=student_id,semester__pk=semester_id)
-     
+
 
 def class_exam_report(request, class_pk, exam_pk):
     if request.user.is_authenticated():
@@ -550,8 +550,8 @@ def exam_exam_report(request, exam_pk):
         exam_report = ExamReport.objects.filter(exam = exam_pk)
         return render(request,'exam/student_exam_report.html', {"exam_report":exam_report})
     else:
-        return render(request, 'user/login.html',{'settings':settings}) 
-   
+        return render(request, 'user/login.html',{'settings':settings})
+
 #
 #exam report
 
@@ -576,7 +576,7 @@ def create_subject(request):
                 form = SubjectForm()
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'subject/new_subject.html', {'form':form, 'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
@@ -587,14 +587,14 @@ def subjects_list(request):
         return render(request, 'subject/subjects_list.html', {'subjects':subjects,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def subject_details(request, pk):
     if request.user.is_authenticated():
         subject = Subject.objects.get(pk=pk)
         return render(request, 'subject/subject_details.html', {'subject':subject,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})
-    
+
 def edit_subject(request, pk):
     if request.user.is_authenticated():
         error = None
@@ -609,11 +609,11 @@ def edit_subject(request, pk):
                 form = SubjectForm(instance=subject)
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'subject/edit_subject.html', {'form':form, 'subject':subject, 'error':error,'settings':settings})
     else:
         return render(request, 'user/login.html')
-    
+
 
 # Billing related View
 
@@ -634,7 +634,7 @@ def new_bill_type(request):
                 return render(request, 'bills/new_bill_type.html', {'form':form,'error':error})
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'bills/new_bill_type.html', {'form':form,'error':error})
     else:
         return render(request, 'user/login.html')
@@ -644,7 +644,7 @@ def edit_bill_type(request,pk):
         error = None
         try:
             if request.user.is_superuser:
-                
+
                 bill_type = get_object_or_404(BillType, pk=pk)
                 if request.method == 'POST':
                     form = BillTypeForm(request.POST, instance=bill_type)
@@ -653,7 +653,7 @@ def edit_bill_type(request,pk):
                         return redirect('university.views.account_details', pk=bill_type.pk)
                 else:
                     form = BillTypeForm(instance=bill_type)
-                
+
                 return render(request, 'bills/new_bill_type.html', {'form':form,'error':error})
 
             else:
@@ -661,12 +661,12 @@ def edit_bill_type(request,pk):
                 return render(request, 'bills/new_bill_type.html', {'form':form,'error':error})
         except:
             error = "Please make sure you entered all required field's data"
-            
+
         return render(request, 'bills/new_bill_type.html', {'form':form,'error':error})
     else:
         return render(request, 'user/login.html')
 
-    
+
 def bill_type_list(request):
     if request.user.is_authenticated():
         error = None
@@ -675,7 +675,7 @@ def bill_type_list(request):
         except:
             if bill_types == None or bill_types.count()==0:
                 error = "Sorry no bill types available yet, contact the system admin to register them."
-                
+
         return render('bills/bill_type_list.html',{'bill_types':bill_types, 'error':error})
     else:
         return render(request, 'user/login.html')
@@ -684,7 +684,7 @@ def generate_auto_bills(request):
     try:
         accounts = Account.objects.filter(owner__status=True)
         bill_types = BillType.objects.filter(is_auto_generated=True)
-        
+
         for bill_type in bill_types:
             for ac in accounts:
                 print(ac.number)
@@ -694,7 +694,7 @@ def generate_auto_bills(request):
                 date = timezone.now()
                 newBill.created_by = Employee.objects.get(pk=1)
                 newBill.type = bill_type
-                newBill.save()                                       
+                newBill.save()
                 print("Done!")
     except Exception as e:
         print("Sorry! auto bill failed.")
