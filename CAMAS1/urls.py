@@ -17,11 +17,12 @@ from django.conf.urls import include, url
 from django.contrib import admin
 import CAMAS1.views
 import university
+import student
 
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include('university.urls')),
+    url(r'^', include('student.urls')),
     url(r'^cms/', include('university.urls')),
 
     #user authentication urls
