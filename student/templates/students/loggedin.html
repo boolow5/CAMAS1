@@ -1,0 +1,11 @@
+{% extends 'university/layout.html' %}
+
+{% block content %}
+
+	<h2>Hi {{ username }} you're logged in as student!</h2>
+	<p>Click <a href='/student/logout/'>here</a> to logout.</p>
+
+	{% include 'students/partials/profile.html' %}
+
+
+{% endblock %}

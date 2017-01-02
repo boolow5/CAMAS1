@@ -1,0 +1,40 @@
+{% block student_profile %}
+
+<div class="row">
+  <div class="col-sm-5">
+    <h4>Academic Info</h4>
+    <p>
+      Please choose the semester you want to check.
+      <ul>
+        <li>
+          <a href="/checkmarks?semester=1">Semester One</a>
+        </li>
+        <li>
+          <a href="/checkmarks?semester=2">Semester Two</a>
+        </li>
+        <li>
+          <a href="/checkmarks?semester=3">Semester Three</a>
+        </li>
+      </ul>
+    </p>
+  </div>
+
+  <div class="col-sm-7">
+    <h4>Account Info</h4>
+    <p>
+      Your current balance is $20.
+      <strong>Your payment history:</strong>
+      <ol>
+        <li>
+          On 01/01/2017 you paid $20 for december monthly fee.
+        </li>
+        <li>
+          On 03/02/2017 you paid $40 for january and february monthly fees.
+        </li>
+      </ol>
+    </p>
+  </div>
+</div>
+
+
+{% endblock %}
