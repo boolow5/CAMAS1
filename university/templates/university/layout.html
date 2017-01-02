@@ -12,6 +12,7 @@
     <link href="{% static 'university/css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'university/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'university/css/style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'student/css/style.css' %}" />
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -25,15 +26,19 @@
   		<div class='header'>
   			{% include "university/header.html" %}
   		</div><!-- header -->
-  		
+
   		<div class='menus'>
-  			{% include 'university/menu2.html' %}
+        {% if student_user %}
+          {% include 'students/partials/nav.html' %}
+        {% else %}
+  			  {% include 'university/menu2.html' %}
+        {% endif %}
   		</div><!-- menus -->
-  		
+
 	    <div class='content'>
 	    	{% block content %}{% endblock %}
 	    </div>
-	    
+
 	    <div class='footer'>
 	    	{% include "university/footer.html" %}
 
@@ -46,7 +51,7 @@
     <script src="{% static 'university/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'university/js/result.js' %}"></script>
     <script src="{% static 'university/js/results.js' %}"></script>
-	<script type="text/javascript"> 
+	<script type="text/javascript">
 	   //var a = "{{someDjangoVariable}}"
 
 	</script>
