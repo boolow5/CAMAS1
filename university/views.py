@@ -16,7 +16,8 @@ def index(request):
     if request.user.is_authenticated():
         return render(request, 'index.html',{'settings':settings})
     else:
-        return render(request, 'login.html',{'settings':settings})
+        return redirect('/users/login') #render(request, 'user/login.html',{'settings':settings})
+
 
 def aboutus(request):
     return render(request, 'about.html', {'settings':settings})
@@ -433,7 +434,9 @@ def edit_exam_report(request, pk):
 
 def student_exam_report(request, pk, year=1, semester=1):
     if request.user.is_authenticated():
+        t = generate_exam_marks_table(pk=pk, year=year, semester=semester)
         student =  Student.objects.get(pk=pk)
+        '''
 
         try:
             subs = classSubjects.objects.get(classroom = student.classroom, year = year, semester = semester)
@@ -525,9 +528,11 @@ def student_exam_report(request, pk, year=1, semester=1):
         table += '</tbody></table>'
 
         t = '<table>\n<thead><tr><td>name</td><td>age</td><td>sex</td></tr></thead><tbody><tr><td>mahdi</td><td>27</td><td>M</td></tr><tr><td>muno</td><td>23</td><td>F</td></tr></tbody></table>'
+        '''
 
         if int(year) <= student.classroom.current_year.level:
-            return render(request,'exam/student_exam_report.html', {'t':table,'student':student,'year':year,'semester':semester,'subjects':subjects, 'settings':settings})
+            #return render(request,'exam/student_exam_report.html', {'t':table,'student':student,'year':year,'semester':semester,'subjects':subjects, 'settings':settings})
+            return render(request,'exam/student_exam_report.html', {'t':t,'student':student,'year':year,'semester':semester, 'settings':settings})
         else:
             return render(request,'exam/student_exam_report.html', {'student':student,'year':year,'semester':semester,'error':'The year you requested is not yet!', 'settings':settings})
 
@@ -703,3 +708,115 @@ def generate_auto_bills(request):
         error.date = timezone.now()
         error.current_user = request.user
         error.save()
+
+def generate_exam_marks_table(pk=0, year=1, semester=1):
+    if pk == 0:
+        return 'Invalid student id'
+
+    student =  None
+    try:
+        student = Student.objects.get(pk=pk)
+    except: pass
+
+    print("student:")
+    print(student)
+
+    if student is None:
+        return 'Student unavailable'
+
+    try:
+        subs = classSubjects.objects.get(classroom = student.classroom, year = year, semester = semester)
+        subjects = subs.subjects.all()
+        print("classSubjects:")
+        print(subs.subjects[0])
+    except Exception as e:
+        print("Exception:", e)
+        subjects = []
+    subject_list = ""
+    print("subjects:")
+    print(subjects)
+
+    results = []
+    totals = []
+    cw_results = []
+    mt_results = []
+    fn_results = []
+    table = '<table>'
+
+    for subject in subjects:
+        subject_list+=str(subject.name) + ','
+        #results.append(ExamReport.objects.filter(exam__e_type__gt=1,subject=subject, student=student).order_by('exam__e_type'))
+        cw_results.append(ExamReport.objects.filter(exam__e_type=3,subject=subject, student=student, exam__year=year,exam__semester=semester).order_by('exam__e_type'))
+        mt_results.append(ExamReport.objects.filter(exam__e_type=2,subject=subject, student=student, exam__year=year,exam__semester=semester).order_by('exam__e_type'))
+        fn_results.append(ExamReport.objects.filter(exam__e_type=4,subject=subject, student=student, exam__year=year,exam__semester=semester).order_by('exam__e_type'))
+
+
+
+
+
+    head = ['Subject','Class work 1', 'Mid-term', 'Class work 2', 'Final','Total']
+    rows = []
+
+    for i in range(len(subjects)):
+        sub_total = 0
+        row = []
+        row.append(subjects[i])
+
+        if len(cw_results[i]) != 0:
+            try:
+                sub_total += cw_results[i][0].grade
+                row.append(str(cw_results[i][0].grade))
+            except:pass
+        else:
+            row.append('')
+
+        if len(mt_results[i]) != 0:
+            try:
+                sub_total += mt_results[i][0].grade
+                row.append(str(mt_results[i][0].grade))
+            except:pass
+        else:
+            row.append('')
+
+        if len(cw_results[i]) ==2:
+            try:
+                sub_total += cw_results[i][1].grade
+                row.append(str(cw_results[i][1].grade))
+            except:pass
+
+        else:
+            row.append('')
+
+
+        if len(fn_results[i]) != 0:
+            try:
+                sub_total += fn_results[i][0].grade
+                row.append(str(fn_results[i][0].grade))
+            except:pass
+        else:
+            row.append('')
+
+        row.append(str(sub_total))
+        totals.append(sub_total)
+
+
+        rows.append(row)
+
+    #Building table from the above data
+
+    table = '<table><thead><tr>'
+    for h in head:
+        table += '<td>' + str(h) + '</td>'
+
+    table += '</tr></thead><tbody>'
+
+    for i in range(len(rows)):
+        table += '<tr>'
+
+        for j in range(len(rows[i])):
+            table += '<td>' + str(rows[i][j]) + '</td>'
+        table += '</tr>'
+    table += '</tbody></table>'
+
+    t = '<table>\n<thead><tr><td>name</td><td>age</td><td>sex</td></tr></thead><tbody><tr><td>mahdi</td><td>27</td><td>M</td></tr><tr><td>muno</td><td>23</td><td>F</td></tr></tbody></table>'
+    return table
