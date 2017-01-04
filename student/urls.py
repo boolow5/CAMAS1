@@ -11,6 +11,7 @@ urlpatterns = [
                url(r'^student/invalid/$', views.invalid_login),
 
                #student services
-               url(r'^checkmarks/$', views.checkmarks),
+               #url(r'^checkmarks/$', views.checkmarks),
+               url(r'^checkmarks/$', views.get_report),
                #url(r'^checkbalance/$', views.checkbalance),
     ]

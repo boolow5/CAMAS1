@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.template.context_processors import csrf
 from university import settings
 from student.models import *
+from university.models import ExamReport
 
 # Create your views here.
 def index(request):
@@ -115,12 +117,107 @@ def get_current_student(request):
         print("STUDENT NOT FOUND")
         return None
 
-    student_info = {
-        'student': current_student.student,
-        'student_auth': current_student
-    }
+    student = {}
+    student["id"] = current_student.student.pk
+    student["full_name"] = str(current_student.student.first_name) + ' ' + str(current_student.student.middle_name) + ' '+ str(current_student.student.last_name)
+    student["registered"] = current_student.student.registered
+
+    student_auth = {}
+    student_auth["id"] = current_student.pk
+    student_auth["username"] = current_student.username
+
+    student_info = {}
+
+    student_info['student']= student
+    student_info['student_auth']= student_auth
     return student_info
 
+def get_exam_report(student_id=0, subject_id=0):
+    if student_id == 0:
+        return None
+    if subject_id == 0:
+        return None
+    rp = ExamReport.objects.filter(student__pk=student_id, subject__pk=subject_id)
+    report = {}
+    report["items"] = []
+    for r in rp:
+        #report["items"][str(i)] = str(r)
+        item = {}
+        item["exam_type"] = r.exam.e_type.name
+        item["subject"] = {
+            "id": r.subject.id,
+            "name":r.subject.name
+        }
+        item["grade"] = r.grade
+        item["notes"] = r.note
+        report["items"] += [item]
+    if len(report["items"]) == 0:
+        report["error"] = "No items found"
+    return report
+def get_report(request):
+    student_id = request.GET.get('student_id', 0)
+    subject_id = request.GET.get('subject_id', 0)
+    if int(student_id) == 0:
+        return JsonResponse({"error":"Invalid student id. Please login"})
+    if int(subject_id) == 0:
+        return JsonResponse({"error":"Subject id is required"})
+    rp = ExamReport.objects.filter(student__pk=student_id, subject__pk=subject_id)
+    subjects = {}
+    for r in rp:
+        # collect all subjects in this report
+        s = 0
+        try:
+            s = len(subjects[r.subject.name])
+        except:pass
+        if s < 1:
+            subjects[r.subject.name] = [{
+                "exam_type":r.exam.e_type.name,
+                "grade":r.grade, "notes":r.note
+            }]
+        else:
+            subjects[r.subject.name] += [{"exam_type":r.exam.e_type.name, "grade":r.grade, "notes":r.note}]
+
+    subject_exams = {}
+    '''
+    for subject in subjects:
+        et = 0
+        try:
+            et = len(subject_exams[subject["exam_type"]])
+        except Exception as e:
+            print("ERROR:")
+            print(e)
+        if et < 1:
+            #subject_exams[subject["exam_type"]] = [{
+            #    "grade": subject["grade"],
+            #    "notes": subject["notes"]
+            #}]
+    '''
+    if not subjects:
+        return JsonResponse({"error": "items not available"})
+    return JsonResponse({"items":subjects, "exam_items": subject_exams})
+
+
 # student services
+# NO LONGER USED NOW USING get_report(request) INSTEAD.
 def checkmarks(request):
-    return render(request, 'students/checkmarks.html',{})
+    print("checkmarks:")
+    student_info = get_current_student(request)
+    student_id = None
+    try:
+        student_id = student_info["student"]["id"]
+    except Exception as e:
+        print(e)
+    if student_id == None:
+        return JsonResponse({"error":"Invalid student id. Please login"})
+    subject_id = request.GET.get('subject_id')
+    print(subject_id)
+    print(student_id)
+    if int(subject_id) < 1:
+        return JsonResponse({"error": "invalid subject id"})
+
+    rp = get_exam_report(student_id=student_id, subject_id=subject_id)
+    if rp is None:
+        return JsonResponse({"error":"Invalid subject"})
+    #return render(request, 'students/checkmarks.html',{})
+    student_info["report"] = rp
+    return JsonResponse(student_info, safe=False)
