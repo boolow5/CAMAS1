@@ -26,7 +26,10 @@ class Employee(models.Model):
 
     def __str__(self):
         if self.user is not None:
-            return self.user.first_name + ' ' + self.user.last_name
+            if len(self.user.first_name) and len(self.user.last_name):
+                return self.user.first_name + ' ' + self.user.last_name
+            else:
+                return self.user.username
         else: return "[None user chosen yet.]"
 
 class Faculty(models.Model):
