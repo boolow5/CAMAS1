@@ -50,7 +50,7 @@ class ClassroomForm(ModelForm):
     subjects = forms.ModelMultipleChoiceField(queryset=Subject.objects.all(), widget=forms.CheckboxSelectMultiple())
     class Meta:
         model = Classroom
-        fields = ('name','current_year','current_semester','max_year', 'status','subjects')
+        fields = ('name','current_semester','max_year', 'status','subjects')
 
 class AccountForm(ModelForm):
     class Meta:
