@@ -1,0 +1,77 @@
+{% extends 'university/layout.html' %}
+{% load staticfiles %}
+{% block content %}
+
+<h1>Details of
+{{ student }} exam results
+ </h1>
+ <h3>Student Info:</h3>
+ <table>
+   <tr>
+   	<td>ID: </td>
+   	<td>{{ student.pk }}</td>
+   	<td>Current Year:</td>
+   	<td>{{ student.classroom.current_year }}</td>
+   </tr>
+   <tr>
+    <td>Name:</td>
+    <td>{{ student }}</td>
+    <td>Current Semester:</td>
+    <td>{{ student.classroom.current_semester }}</td>
+   </tr>
+ </table>
+
+ <div id="marks-container">
+   <h1>Marks</h1>
+   {% for subject in results.items %}
+   <ul v-for="item in items">
+     <li>
+       <h3>{{subject}}</h3>
+       <table>
+         <tr>
+           <th v-for="result in item.results">
+             {{result.exam_type}}
+           </th>
+         </tr>
+         <tr>
+           <th v-for="result in item.results">
+             {{result.grade}}
+           </th>
+         </tr>
+       </table>
+     </li>
+   </ul>
+   {% endfor %}
+ </div>
+
+<script src="{% static 'student/js/vue.min.js' %}"></script>
+<script>
+var results = {
+  "English": {
+    subject_name: "English",
+    results: [
+      {grade: "10.00", notes: "OK", exam_type: "Class Work"},
+      {grade: "25.00", notes: "OK", exam_type: "Mid Term"},
+      {grade: "8.00", notes: "OK", exam_type: "Class Work"}
+    ]
+  },
+  "Arabic": {
+    subject_name: "Arabic",
+    results: [
+      {grade: "10.00", notes: "OK", exam_type: "Class Work"},
+      {grade: "25.00", notes: "OK", exam_type: "Mid Term"},
+      {grade: "8.00", notes: "OK", exam_type: "Class Work"}
+    ]
+  }
+}
+new Vue({
+  el: "#marks-container",
+  data: {
+    items: results,
+    exam_items: {}
+  }
+});
+
+</script>
+
+{% endblock %}

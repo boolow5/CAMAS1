@@ -1,0 +1,35 @@
+{% block messages %}
+	<div class='row messages'>
+		{% if error %}
+		<div class="error-message">
+			<p class="alert alert-danger">
+				{{error}}
+			</p>
+		</div>
+		{% endif %}
+		{% if warning %}
+		<div class="warning-message">
+			<p class="alert alert-warning">
+				{{warning}}
+			</p>
+		</div>
+		{% endif %}
+		{% if success %}
+		<div class="success-message">
+			<p class="alert alert-success">
+				{{success}}
+			</p>
+		</div>
+		{% endif %}
+		{% if info %}
+		<div class="info-message">
+			<p class="alert alert-info">
+				{{info}}
+			</p>
+		</div>
+		{% endif %}
+
+
+
+	</div><!--banner-->
+{% endblock %}
