@@ -9,7 +9,7 @@ from django.contrib.auth import user_logged_in
 from university.models import *
 from university.forms import *
 from university.tables import *
-
+from student.views import generateExamReport
 
 # Create your views here.
 def index(request):
@@ -432,109 +432,24 @@ def edit_exam_report(request, pk):
     else:
         return render(request, 'user/login.html',{'settings':settings})
 
-def student_exam_report(request, pk, year=1, semester=1):
+def student_exam_report(request, pk, semester=1):
     if request.user.is_authenticated():
-        t = generate_exam_marks_table(pk=pk, year=year, semester=semester)
+        #t = generate_exam_marks_table(pk=pk, semester=semester)
         student =  Student.objects.get(pk=pk)
-        '''
+        student_id = request.GET.get('student_id', 0)
+        subject_id = request.GET.get('subject_id', 0)
+        if student_id < 1:
+            try:
+                student_id = request.session["loggedin_student"]
+            except: return render(request,'exam/student_exam_report2.html', {'student':student,'semester':semester,'error':"student id is not provided", 'settings':settings})
 
-        try:
-            subs = classSubjects.objects.get(classroom = student.classroom, year = year, semester = semester)
-            subjects = subs.subjects.all()
-        except:
-            subjects = []
-        subject_list = ""
+        results = generateExamReport(student_id, subject_id)
 
-        results = []
-        totals = []
-        cw_results = []
-        mt_results = []
-        fn_results = []
-        table = '<table>'
-
-        for subject in subjects:
-            subject_list+=str(subject.name) + ','
-            #results.append(ExamReport.objects.filter(exam__e_type__gt=1,subject=subject, student=student).order_by('exam__e_type'))
-            cw_results.append(ExamReport.objects.filter(exam__e_type=3,subject=subject, student=student, exam__year=year,exam__semester=semester).order_by('exam__e_type'))
-            mt_results.append(ExamReport.objects.filter(exam__e_type=2,subject=subject, student=student, exam__year=year,exam__semester=semester).order_by('exam__e_type'))
-            fn_results.append(ExamReport.objects.filter(exam__e_type=4,subject=subject, student=student, exam__year=year,exam__semester=semester).order_by('exam__e_type'))
-
-
-
-
-
-        head = ['Subject','Class work 1', 'Mid-term', 'Class work 2', 'Final','Total']
-        rows = []
-
-        for i in range(len(subjects)):
-            sub_total = 0
-            row = []
-            row.append(subjects[i])
-
-            if len(cw_results[i]) != 0:
-                try:
-                    sub_total += cw_results[i][0].grade
-                    row.append(str(cw_results[i][0].grade))
-                except:pass
-            else:
-                row.append('')
-
-            if len(mt_results[i]) != 0:
-                try:
-                    sub_total += mt_results[i][0].grade
-                    row.append(str(mt_results[i][0].grade))
-                except:pass
-            else:
-                row.append('')
-
-            if len(cw_results[i]) ==2:
-                try:
-                    sub_total += cw_results[i][1].grade
-                    row.append(str(cw_results[i][1].grade))
-                except:pass
-
-            else:
-                row.append('')
-
-
-            if len(fn_results[i]) != 0:
-                try:
-                    sub_total += fn_results[i][0].grade
-                    row.append(str(fn_results[i][0].grade))
-                except:pass
-            else:
-                row.append('')
-
-            row.append(str(sub_total))
-            totals.append(sub_total)
-
-
-            rows.append(row)
-
-        #Building table from the above data
-
-        table = '<table><thead><tr>'
-        for h in head:
-            table += '<td>' + str(h) + '</td>'
-
-        table += '</tr></thead><tbody>'
-
-        for i in range(len(rows)):
-            table += '<tr>'
-
-            for j in range(len(rows[i])):
-                table += '<td>' + str(rows[i][j]) + '</td>'
-            table += '</tr>'
-        table += '</tbody></table>'
-
-        t = '<table>\n<thead><tr><td>name</td><td>age</td><td>sex</td></tr></thead><tbody><tr><td>mahdi</td><td>27</td><td>M</td></tr><tr><td>muno</td><td>23</td><td>F</td></tr></tbody></table>'
-        '''
-
-        if int(year) <= student.classroom.current_year.level:
-            #return render(request,'exam/student_exam_report.html', {'t':table,'student':student,'year':year,'semester':semester,'subjects':subjects, 'settings':settings})
-            return render(request,'exam/student_exam_report.html', {'t':t,'student':student,'year':year,'semester':semester, 'settings':settings})
+        if int(semester) <= student.classroom.current_semester.level:
+            #return render(request,'exam/student_exam_report2.html', {'student':student,'semester':semester,'subjects':subjects, 'settings':settings})
+            return render(request,'exam/student_exam_report2.html', {"results": results,'student':student,'semester':semester, 'settings':settings})
         else:
-            return render(request,'exam/student_exam_report.html', {'student':student,'year':year,'semester':semester,'error':'The year you requested is not yet!', 'settings':settings})
+            return render(request,'exam/student_exam_report2.html', {'student':student,'semester':semester,'error':'The semester you requested is not yet!', 'settings':settings})
 
     else:
         return render(request, 'user/login.html',{'settings':settings})
