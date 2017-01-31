@@ -12,9 +12,9 @@
 	<div class='student-list-item'>
 		ID: <b>{{ student.pk }}</b> Name:<a class="text-{% if student.status %}primary{% else %}danger{% endif %}" href="{%	url	"student_profile"	pk=student.pk	%}">{{ student }}</a>
 		<a href="{%	url	"student_account_details"	student.pk	%}"> <span class='marks-check'>Check current balance</span></a>
-		<a href="{%	url	"student_exam_report"	student.pk student.classroom.current_year.pk student.classroom.current_semester.pk	%}"> <span class='marks-check'>Check current marks</span></a>
+		<a href="{%	url	"student_exam_report"	student.pk student.classroom.current_semester.pk	%}"> <span class='marks-check'>Check current marks</span></a>
 		<a href="{%	url	"payments_list"	student.pk %}"> <span class='marks-check'>Check payment history</span></a>
-		
+
 	</div>
 {% endfor %}
 {% endblock %}
