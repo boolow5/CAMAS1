@@ -157,10 +157,21 @@ def get_exam_report(student_id=0, subject_id=0):
 def get_report(request):
     student_id = request.GET.get('student_id', 0)
     subject_id = request.GET.get('subject_id', 0)
+    if student_id < 1:
+        try:
+            student_id = request.session["loggedin_student"]
+        except: return JsonResponse({"error": "student id is not provided"})
+
+    subjects = generateExamReport(student_id, subject_id)
+    if not subjects:
+        return JsonResponse({"error": "items not available"})
+    return JsonResponse({"items":subjects})
+
+def generateExamReport(student_id, subject_id):
     if int(student_id) == 0:
-        return JsonResponse({"error":"Invalid student id. Please login"})
+        return {"error":"Invalid student id. Please login"}
     if int(subject_id) == 0:
-        return JsonResponse({"error":"Subject id is required"})
+        return {"error":"Subject id is required"}
     rp = ExamReport.objects.filter(student__pk=student_id, subject__pk=subject_id)
     subjects = {}
     for r in rp:
@@ -170,31 +181,11 @@ def get_report(request):
             s = len(subjects[r.subject.name])
         except:pass
         if s < 1:
-            subjects[r.subject.name] = [{
-                "exam_type":r.exam.e_type.name,
-                "grade":r.grade, "notes":r.note
-            }]
-        else:
-            subjects[r.subject.name] += [{"exam_type":r.exam.e_type.name, "grade":r.grade, "notes":r.note}]
+            subjects[r.subject.name] = []
+        subjects[r.subject.name] += [{"subject_name": r.subject.name, "exam_type":r.exam.e_type.name, "grade":r.grade, "notes":r.note}]
 
     subject_exams = {}
-    '''
-    for subject in subjects:
-        et = 0
-        try:
-            et = len(subject_exams[subject["exam_type"]])
-        except Exception as e:
-            print("ERROR:")
-            print(e)
-        if et < 1:
-            #subject_exams[subject["exam_type"]] = [{
-            #    "grade": subject["grade"],
-            #    "notes": subject["notes"]
-            #}]
-    '''
-    if not subjects:
-        return JsonResponse({"error": "items not available"})
-    return JsonResponse({"items":subjects, "exam_items": subject_exams})
+    return subjects
 
 
 # student services
