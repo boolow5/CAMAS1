@@ -5,8 +5,14 @@ from django.utils import timezone
 # Create your models here.
 
 class Subject(models.Model):
+    code = models.CharField(max_length=10)
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=300)
+
+    def setName(self, name):
+        if len(name) > 1:
+            self.name = name
+            self.name[:2].upper()+str(self.id)
 
     def __str__(self):
         return self.name
@@ -48,33 +54,54 @@ class Department(models.Model):
 #student1 related models
 
 class Year(models.Model):
-    name = models.CharField(max_length=30)
-    level = models.IntegerField()
+    name = models.CharField(max_length=30, unique=True)
+    level = models.IntegerField(default=1, unique=True)
 
     def __str__(self):
         return str(self.name) + ' year'
 
 class Term(models.Model):
-    is_first = models.BooleanField(default=True)
-    name = models.CharField(max_length=30)
-
+    name = models.CharField(max_length=30, unique=True)
+    level = models.IntegerField(default=1, unique=True)
 
     def __str__(self):
         return str(self.name) + ' semester'
 
 
-
 class Classroom(models.Model):
     name = models.CharField(max_length=30, default='One')
-    current_year = models.ForeignKey(Year)
     current_semester = models.ForeignKey(Term)
     date_opened = models.DateField(default= timezone.now)
-    max_year = models.IntegerField(default=4)
+    max_semesters = models.IntegerField(default=4, null=False)
     department = models.ForeignKey(Department, null=True)
     status = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
+    def graduate(self):
+        # check if this is the last year
+        if self.max_semesters == self.current_semester:
+            # set classroom status to false
+            self.status = false
+
+            # if it's not the last year
+        elif self.current_semester < self.max_semesters:
+            self.current_semester += 1
+    def getCurrentYear(self):
+        if self.current_semester < 2:
+            return 1
+        elif self.current_semester < 4:
+            return 2
+        elif self.current_semester < 6:
+            return 3
+        elif self.current_semester < 8:
+            return 4
+        elif self.current_semester < 10:
+            return 6
+        elif self.current_semester < 12:
+            return 7
+        elif self.current_semester < 14:
+            return 8
 
 class classSubjects(models.Model):
     classroom = models.ForeignKey(Classroom)
@@ -104,8 +131,6 @@ class Student(models.Model):
 
     def __str__(self):
         return self.first_name + " " + self.middle_name + " " + self.last_name
-
-
 
 class Account(models.Model):
     owner = models.OneToOneField(Student)
