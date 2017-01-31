@@ -167,12 +167,27 @@ def get_report(request):
         return JsonResponse({"error": "items not available"})
     return JsonResponse({"items":subjects})
 
-def generateExamReport(student_id, subject_id):
+def get_exam_results(request):
+    student_id = request.GET.get('student_id', 0)
+    if student_id < 1:
+        try:
+            student_id = request.session["loggedin_student"]
+        except: return render(request, 'students/get_exam_results.html',{"error": "either student is not loggedin or you didn't provide a valid id", 'settings':settings})
+
+    subjects = generateExamReport(student_id, all=True)
+    if not subjects:
+        return render(request, 'students/get_exam_results.html',{"error": "items not available", 'settings':settings})
+    return render(request, 'students/get_exam_results.html',{"items":subjects, 'settings':settings})
+
+def generateExamReport(student_id=0, subject_id=0, all=False):
     if int(student_id) == 0:
         return {"error":"Invalid student id. Please login"}
-    if int(subject_id) == 0:
+    if int(subject_id) == 0 and all == False:
         return {"error":"Subject id is required"}
-    rp = ExamReport.objects.filter(student__pk=student_id, subject__pk=subject_id)
+    if all == True:
+        rp = ExamReport.objects.filter(student__pk=student_id)
+    else:
+        rp = ExamReport.objects.filter(student__pk=student_id, subject__pk=subject_id)
     subjects = {}
     for r in rp:
         # collect all subjects in this report
@@ -182,9 +197,47 @@ def generateExamReport(student_id, subject_id):
         except:pass
         if s < 1:
             subjects[r.subject.name] = []
-        subjects[r.subject.name] += [{"subject_name": r.subject.name, "exam_type":r.exam.e_type.name, "grade":r.grade, "notes":r.note}]
+        subjects[r.subject.name] += [
+            {
+                "subject_name": r.subject.name,
+                "exam_type":r.exam.e_type.name,
+                "grade":r.grade, "notes":r.note
+            }
+        ]
 
     subject_exams = {}
+    return subjects
+
+def generateExamReport(student_id=0, subject_id=0, all=False):
+    if int(student_id) == 0:
+        return {"error":"Invalid student id. Please login"}
+    if int(subject_id) == 0 and all == False:
+        return {"error":"Subject id is required"}
+    if all == True:
+        rp = ExamReport.objects.filter(student__pk=student_id)
+    else:
+        rp = ExamReport.objects.filter(student__pk=student_id, subject__pk=subject_id)
+    subjects = []
+    for r in rp:
+        # collect all subjects in this report
+        s = 0
+        try:
+            s = len(subjects)
+        except:pass
+        if s < 1:
+            subjects = []
+        subjects += [
+            {
+                "subject_name": r.subject.name,
+                "exam_type":r.exam.e_type.name,
+                "grade":r.grade, "notes":r.note,
+                "semester": r.semester
+            }
+        ]
+
+    semesters = []
+    for i in range(1, rp[0].student.classroom.current_semester.level):
+        print("#{1}".format(i))
     return subjects
 
 

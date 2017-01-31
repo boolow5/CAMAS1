@@ -329,16 +329,13 @@ def edit_exam(request, pk):
 def create_exam_type(request):
     if request.user.is_authenticated():
         error = None
-        try:
-            if request.method == 'POST':
-                form = ExamTypeForm(request.POST)
-                if form.is_valid():
-                    exam_type = form.save()
-                    return redirect('university.views.exam_type_details', pk=exam_type.pk)
-            else:
-                form = ExamTypeForm()
-        except:
-            error = "Please make sure you entered all required field's data"
+        if request.method == 'POST':
+            form = ExamTypeForm(request.POST)
+            if form.is_valid():
+                exam_type = form.save()
+                return redirect('/cms/exam_reports', pk=exam_type.pk)
+        else:
+            form = ExamTypeForm()
 
         return render(request, 'exam/new_exam_type.html', {'form':form, 'error':error,'settings':settings})
     else:
@@ -382,17 +379,43 @@ def edit_exam_type(request, pk):
 def create_exam_report(request):
     if request.user.is_authenticated():
         error = None
-        try:
-            if request.method == 'POST':
-                form = ExamReportForm(request.POST)
-                if form.is_valid():
-                    exam_report = form.save(commit=False)
-                    exam_report.date = timezone.now()
-                    return redirect('university.views.exam_report_details', pk=exam_report.pk)
-            else:
-                form = ExamReportForm()
-        except:
-            error = "Please make sure you entered all required field's data"
+        #try:
+        if request.method == 'POST':
+            print("POSTing ExamReportForm")
+            form = ExamReportForm(request.POST)
+            if form.is_valid():
+                print("Form is valid")
+                exam_report = form.save(commit=False)
+                if exam_report.grade > exam_report.exam.e_type.max_marks:
+                    error = "{0} is the maximum grade allowed for {1} but you entered {2}".format(exam_report.exam.e_type.max_marks, exam_report.exam.e_type, exam_report.grade)
+                    return render(request, 'exam/new_exam_report.html', {'form':form, 'error':error,'settings':settings})
+                er = exam_report
+                earlier_exam = None
+                try:
+                    earlier_exam = ExamReport.objects.get(student__pk=er.student.id, subject__pk=er.subject.id, exam__e_type=er.exam.e_type.id)
+                except: pass
+
+                if earlier_exam is not None:
+                    form = ExamReportForm()
+                    e = earlier_exam
+                    error = "{0} already got {1} marks in {2}'s {3}".format(e.student, e.grade, e.subject, e.exam)
+                    #return render(request, 'exam/new_exam_type.html', {'form':form, 'error':error,'settings':settings})
+                    return render(request, 'exam/new_exam_report.html', {'form':form, 'error':error,'settings':settings})
+
+                exam_report.date = timezone.now()
+                exam_report.semester = exam_report.student.classroom.current_semester
+
+                print("Exam report pk = {0}".format(er.pk))
+                new_report = form.save()
+                exam_report_pk = new_report.pk
+
+                if exam_report_pk is None:
+                    exam_report_pk = 0
+                return redirect('/cms/exam_report/'+str(exam_report_pk))
+        else:
+            form = ExamReportForm()
+        #except:
+        #    error = "Please make sure you entered all required field's data"
 
         return render(request, 'exam/new_exam_report.html', {'form':form, 'error':error,'settings':settings})
     else:
@@ -400,15 +423,25 @@ def create_exam_report(request):
 
 def exam_reports_list(request):
     if request.user.is_authenticated():
-        exam_reports = ExamReport.objects.all()
-        return render(request, 'exam/exam_reports_list.html', {'exam_reports':exam_reports,'settings':settings})
+        exam_reports = ExamReport.objects.all().order_by("-pk")
+        return render(request, 'exam/exam_reports_list.html', {
+            'exam_reports':exam_reports,
+            'settings':settings
+            })
     else:
         return render(request, 'user/login.html',{'settings':settings})
 
 def exam_report_details(request, pk):
     if request.user.is_authenticated():
-        exam_report = ExamReport.objects.get(pk=pk)
-        minimum = (exam_report.exam.e_type.max_marks / 2)
+        exam_report = None
+        try:
+            exam_report = ExamReport.objects.get(pk=pk)
+        except: pass
+        if exam_report is None:
+            return render(request, 'exam/exam_report_details.html', {'error': 'Exam Report not found','settings':settings})
+        try:
+            minimum = (exam_report.exam.e_type.max_marks / 2)
+        except: minimum = 5
         return render(request, 'exam/exam_report_details.html', {'exam_report':exam_report, 'minimum':minimum,'settings':settings})
     else:
         return render(request, 'user/login.html',{'settings':settings})

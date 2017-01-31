@@ -1,7 +1,8 @@
 {% extends 'university/layout.html' %}
 {% block content %}
 
-<h1>Details of 
+{% if exam_report %}
+<h1>Details of
 <a href="{%	url	"student_profile"	pk=exam_report.student.pk	%}">{{ exam_report.student }}</a>
  marks for <a href="{%	url	"subject_details"	pk=exam_report.subject.pk	%}">{{ exam_report.subject }} subject</a>
  </h1>
@@ -34,6 +35,9 @@
 		<td><em>Note</em></td>
 		<td><b>{{ exam_report.note }}</b></td>
 	</tr>
-	
+
 </table>
+{% else %}
+  No report found
+{% endif %}
 {% endblock %}

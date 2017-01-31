@@ -1,0 +1,55 @@
+{% extends 'university/layout.html' %}
+
+{% block content %}
+	<h1>GET EXAM RESULTS</h1>
+	{{error}}
+	<h2>Welcome to {{ settings.UNIVERSITY_NAME }}</h2>
+	{% if items %}
+		<ul>
+			<h3>Semester 1</h3>
+			<li>
+				Class works:
+				<ul>
+					{% for subject in items %}
+						{% if subject.exam_type == "Class Work" %}
+						<li>
+							{{subject.grade}}
+						</li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</li>
+			<li>
+				Mid term:
+				<ul>
+					{% for subject in items %}
+						{% if subject.exam_type == "Mid Term" %}
+						<li>
+							{{subject.grade}}
+						</li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</li>
+			<li>
+				Final:
+				<ul>
+					{% for subject in items %}
+						{% if subject.exam_type == "Final" %}
+						<li>
+							{{subject.grade}}
+						</li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</li>
+
+		</ul>
+		<br />
+		{{items}}
+
+	{% else %}
+	there is no items
+	{% endif %}
+
+{% endblock %}

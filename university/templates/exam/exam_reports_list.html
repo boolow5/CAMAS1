@@ -3,8 +3,7 @@
 
 <h1>Exam Reports List</h1>
 {% for exam_report in exam_reports %}
-	<p></b><a href="{%	url	"student_profile"	pk=exam_report.pk	%}">{{ exam_report.student }}</b></a>  got <b>{{ exam_reports.pk }}  </b><a href="{%	url	"exam_report_details"	pk=exam_report.pk	%}">{{ exam_report }}</a> in {{ exam_report.exam.e_type }} exam
-	see full report <a href="{%	url	"student_exam_report"	exam_report.pk exam_report.student.classroom.current_year.pk exam_report.student.classroom.current_semester.pk	%}"> here </a>
+	<p>{{ exam_report.pk }} <a href="{%	url	"exam_report_details"	pk=exam_report.pk	%}">{{ exam_report }}</a>
 	</p>
 {% endfor %}
 {% endblock %}

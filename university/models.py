@@ -202,13 +202,14 @@ class ExamReport(models.Model):
     exam = models.ForeignKey(Exam)
     subject = models.ForeignKey(Subject)
     student = models.ForeignKey(Student)
+    semester = models.ForeignKey(Term, default=1, null=True)
     grade = models.DecimalField(decimal_places=2, max_digits=5, default=0.0)
     date = models.DateField(default=timezone.now)
     modified = models.DateTimeField(auto_now_add=True)
-    note = models.TextField()
+    note = models.TextField(default="OK", null=True)
 
     def __str__(self):
-        return str(self.grade)
+        return str(self.student) + " scored " + str(self.grade) + " in " + str(self.subject.name) + " in " + str(self.exam)
 class ErrorReport(models.Model):
     message=models.CharField(max_length=300)
     date = models.DateTimeField(default=timezone.now)

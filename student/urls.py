@@ -13,5 +13,6 @@ urlpatterns = [
                #student services
                #url(r'^checkmarks/$', views.checkmarks),
                url(r'^checkmarks/$', views.get_report),
+               url(r'^exam_results/$', views.get_exam_results),
                #url(r'^checkbalance/$', views.checkbalance),
     ]
