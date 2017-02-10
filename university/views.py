@@ -466,6 +466,7 @@ def edit_exam_report(request, pk):
         return render(request, 'user/login.html',{'settings':settings})
 
 def student_exam_report(request, pk, semester=1):
+    print("student_exam_report")
     if request.user.is_authenticated():
         #t = generate_exam_marks_table(pk=pk, semester=semester)
         student =  Student.objects.get(pk=pk)
@@ -477,12 +478,15 @@ def student_exam_report(request, pk, semester=1):
             except: return render(request,'exam/student_exam_report2.html', {'student':student,'semester':semester,'error':"student id is not provided", 'settings':settings})
 
         results = generateExamReport(student_id, subject_id)
+        semesters = [i for i in range(1, student.classroom.current_semester.level)]
+        print("semesters:")
+        print(semesters)
 
         if int(semester) <= student.classroom.current_semester.level:
             #return render(request,'exam/student_exam_report2.html', {'student':student,'semester':semester,'subjects':subjects, 'settings':settings})
-            return render(request,'exam/student_exam_report2.html', {"results": results,'student':student,'semester':semester, 'settings':settings})
+            return render(request,'exam/student_exam_report2.html', {"results": results,'student':student,'semester':semester, "semesters": semesters, 'settings':settings})
         else:
-            return render(request,'exam/student_exam_report2.html', {'student':student,'semester':semester,'error':'The semester you requested is not yet!', 'settings':settings})
+            return render(request,'exam/student_exam_report2.html', {'student':student,'semester':semester,'error':'The semester you requested is not yet!', "semesters": semesters, 'settings':settings})
 
     else:
         return render(request, 'user/login.html',{'settings':settings})

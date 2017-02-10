@@ -209,6 +209,7 @@ def generateExamReport(student_id=0, subject_id=0, all=False):
     return subjects
 
 def generateExamReport(student_id=0, subject_id=0, all=False):
+    print("generateExamReport")
     if int(student_id) == 0:
         return {"error":"Invalid student id. Please login"}
     if int(subject_id) == 0 and all == False:
